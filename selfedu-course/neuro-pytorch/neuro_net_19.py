@@ -48,12 +48,13 @@ class DigitDataset(data.Dataset):
     def __len__(self):
         return self.length
 
-# Transformation to convert image to tensor
-to_tensor = tfs.ToImage() # Equivalent to PILToTensor
-d_train = DigitDataset(train=True, transform=to_tensor) # Create training dataset instance
-train_data = data.DataLoader(d_train, batch_size=32, shuffle=True) # Dataloader with batch size of 32 and shuffling
-
-# Retrieve a batch of data
-it = iter(train_data)
-x, y = next(it)
-print(len(d_train)) # Print the total number of samples in the dataset
+d_train = DigitDataset(r"C:\Users\aleks\PycharmProjects\py\selfedu-course\dataset")
+# # Transformation to convert image to tensor
+# to_tensor = tfs.ToImage() # Equivalent to PILToTensor
+# d_train = DigitDataset(train=True, transform=to_tensor) # Create training dataset instance
+# train_data = data.DataLoader(d_train, batch_size=32, shuffle=True) # Dataloader with batch size of 32 and shuffling
+#
+# # Retrieve a batch of data
+# it = iter(train_data)
+# x, y = next(it)
+# print(len(d_train)) # Print the total number of samples in the dataset
