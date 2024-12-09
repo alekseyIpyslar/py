@@ -35,7 +35,7 @@ class RavelTransform(nn.Module):
         RavelTransfrom(), # Flatten the image into a 1D tensor
     ])
 
-    d_train = ImageFolder("dataser/train", transform=transforms) # Load training dataset with transformations
+    d_train = ImageFolder("dataset/train", transform=transforms) # Load training dataset with transformations
     train_data = data.DataLoader(d_train, batch_size=32, shuffle=True) # Batch and shuffle data
 
     optimizer = optim.Adam(params=model.parameters(), lr=0.01) # Adam optimizer with learning rate 0.01

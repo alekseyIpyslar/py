@@ -27,7 +27,7 @@ class DigitNN(nn.Module):
 
 model = DigitNN(28 * 28, 32, 10) # A network with 784 inputs, 32 hidden units, and 10 outputs
 
-transforms = tfs.compose([
+transforms = tfs.Compose([
     tfs.ToImage(), # Convert input to PIL images
     tfs.Grayscale(), # Ensure images are grayscale
     tfs.ToDtype(torch.float32, scale=True), # Normalize to [0, 1]
@@ -54,4 +54,52 @@ for _e in range(epochs): # Loop through epochs
     train_tqdm = tqdm(train_data, leave=False) # Progress bar for training
     for x_train, y_train in train_tqdm: # Iterate over training batches
         predict = model(x_train) # Forward pass
-        loss = loss_function(pre)
+        loss = loss_function(predict, y_train) # Calculate training loss
+
+        optimizer.zero_grad() # Clear gradients
+        loss.backward() # Back propagate loss
+        optimizer.step() # Update weights
+
+        # Update running mean loss
+        lm_count += 1
+        loss_mean = 1 / lm_count * loss.item() + (1 - 1 / lm_count) * loss_mean
+        train_tqdm.set_description(f"Epoch [{_e + 1}/{epochs}], loss_mean={loss_mean:3f}")
+
+model.eval() # Set model to evaluation mode
+Q_val = 0 # Track total validation loss
+count_val = 0 # Count number of validation batches
+
+for x_val, y_val in train_data_val: # Iterate over validation batches
+    with torch.no_grad(): # Disable gradient computation
+        p = model(x_val) # Forward pass
+        loss = loss_function(p, y_val) # Calculate validation loss
+        Q_val += loss.item() # Accumulate validation loss
+        count_val += 1 # Increment batch count
+
+Q_val /= count_val # Average validation loss
+
+loss_lst.append(loss_mean) # Append training loss
+loss_lst_val.append(Q_val) # Append validation loss
+
+print(f" | loss_mean={loss_mean:.3f}, Q_val={Q_val:.3f}") # Print losses
+
+d_test = ImageFolder(r"C:\Users\aleks\PycharmProjects\py\selfedu-course\dataset\test", transform=transforms) # Test dataset
+test_data = data.DataLoader(d_test, batch_size=32, shuffle=False) # DataLoader for test set
+
+Q = 0 # Count correct predictions
+model.eval() # Set model to evaluation mode
+
+for x_test, y_test in test_data: # Iterate over test batches
+    with torch.no_grad(): # Disable gradient computation
+        p = model(x_test) # Forward pass
+        p = torch.argmax(p, dim=1) # Get predicted classes
+        Q += torch.sum(p == y_test).item() # Count correct predictions
+
+Q /= len(test_data) # Calculate accuracy
+print(Q) # Print test accuracy
+
+plt.plot(loss_lst, label="Training loss") # Plot training loss
+plt.plot(loss_lst_val, label="Validation loss") # Plot validation loss
+plt.grid() # Add grid to the plot
+plt.legend() # Add legend
+plt.show() # Display plot
