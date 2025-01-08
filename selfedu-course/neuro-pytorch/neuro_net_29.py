@@ -16,7 +16,7 @@ class SunDataset(data.Dataset):
         self.transform = transform
 
         # Load format.json for file structure
-        with open(os.path.join(self.path, "C://Users//aleks//PycharmProjects//py//selfedu-course//dataset//format.json"), "r") as fp:
+        with open(os.path.join(self.path, ), "r") as fp:
             self.format = json.load(fp)
 
         self.length = len(self.format)
