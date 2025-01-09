@@ -114,4 +114,27 @@ plt.figure(figsize=(2 * n, 2 * 2)) # Set plot size for visualization
 
 # Homotopy between two images from the dataset
 frm, to = d_train.data[d_train.targets == 5][10:12] # Select two images of digit '5'
-frm = transform
+frm = transforms(frm) # Apply transformations to the first image
+to = transforms(to)   # Apply transformations to the second image
+
+# Generate interpolated images between frm and to
+for i, t in enumerate(np.linspace(0., 1., n)):
+    img = frm * (1 - t) + to * t # Linear interpolation
+    predict, _ = model(img.unsqueeze(0)) # Reconstruct interpolated image using the model
+    predict = predict.squeeze(0).view(28, 28) # Reshape output for visualization
+    dec_img = predict.detach().numpy()
+    img = img.view(28, 28).numpy()
+
+    # Plot original interpolated image
+    ax = plt.subplot(2, n, i + 1)
+    plt.imshow(img, cmap='gray')
+    ax.get_xaxis().set_visible(False) # Hide x-axis
+    ax.get_yaxis().set_visible(False) # Hide y-axis
+
+    # Plot reconstructed interpolated image
+    ax2 = plt.subplot(2, n, i + n + 1)
+    plt.imshow(dec_img, cmap='gray')
+    ax2.get_xaxis().set_visible(False) # Hide x-axis
+    ax2.get_yaxis().set_visible(False) # Hide y-axis
+
+plt.show() # Display the plots
