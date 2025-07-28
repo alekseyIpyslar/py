@@ -1,0 +1,7 @@
+# Remember to copy this file under the name .env
+
+BOT_TOKEN = 0000000000:AaBbCcDdEeFfGgHhIiJjKkLlMmNn
+
+# The group in which our bot will run.
+# For the purposes of this chapter, the bot is assumed to be for one group
+MAIN_CHAT_ID = -1001234567890
